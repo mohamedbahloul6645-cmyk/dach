@@ -609,7 +609,7 @@ def generer_rapport_html(kpis, daily, sd, ed, src_label):
 # ══════════════════════════════════════════════════════════════
 with st.sidebar:
     afficher_logo("sidebar", 140)
-    st.markdown("### ⚙️ TRS / OEE")
+    st.markdown("### ⚙️ TRS / OEE", unsafe_allow_html=True)
     st.markdown(f'<div style="font-family:JetBrains Mono,monospace;font-size:0.7rem;color:#94a3b8;padding:4px 0;">👤 {st.session_state["username"]}</div>', unsafe_allow_html=True)
 
     if st.button("🔓 Déconnexion", use_container_width=True):
@@ -617,7 +617,7 @@ with st.sidebar:
         st.session_state.pop("username", None)
         st.rerun()
 
-    st.markdown("---")
+    st.markdown("---", unsafe_allow_html=True)
     df_db = load_db()
     nb_db = len(df_db)
     box_cls = "sb" if nb_db > 0 else "wb"
@@ -630,8 +630,8 @@ with st.sidebar:
     if nb_db > 0:
         c2.download_button("📥 Export", df_db.to_csv(index=False).encode('utf-8'), "simed_db.csv", "text/csv")
 
-    st.markdown("---")
-    st.markdown("##### 📂 IMPORT FICHIER")
+    st.markdown("---", unsafe_allow_html=True)
+    st.markdown("##### 📂 IMPORT FICHIER", unsafe_allow_html=True)
     uploaded = st.file_uploader("Excel ou CSV", type=["xlsx","xls","csv"])
     if uploaded:
         if st.button("➕ Importer", use_container_width=True):
@@ -653,23 +653,23 @@ with st.sidebar:
 2026-04-22,Ligne B,MB02,Marie,Sirop 125mg/5mL,8200,98,30,P03,Problème thermique"""
     st.download_button("📎 Modèle CSV", csv_template, "modele.csv", "text/csv")
 
-    st.markdown("---")
-    st.markdown("##### ⚙️ PARAMÈTRES TRS")
+    st.markdown("---", unsafe_allow_html=True)
+    st.markdown("##### ⚙️ PARAMÈTRES TRS", unsafe_allow_html=True)
     TO = st.number_input("Temps d'ouverture (min/j)", 60, 1440, 480, 30)
     CAD = st.number_input("Cadence nominale (u/min)", 1, 9999, 50, 5)
     Tc = 1.0 / max(0.001, CAD)
     st.markdown(f'<div class="ib" style="font-size:0.78rem;">Tc = {Tc:.4f} min/u &nbsp;|&nbsp; Max = {TO*CAD:,.0f} u</div>', unsafe_allow_html=True)
 
-    st.markdown("---")
-    st.markdown("##### 🚨 SEUILS")
+    st.markdown("---", unsafe_allow_html=True)
+    st.markdown("##### 🚨 SEUILS", unsafe_allow_html=True)
     c1, c2 = st.columns(2)
     S_TRS   = c1.number_input("TRS min (%)", 0, 100, 60)
     S_DISPO = c2.number_input("Dispo min (%)", 0, 100, 70)
     S_ARRET = st.number_input("Arrêts max/j (min)", 0, 1440, 120)
     S_REBUT = st.number_input("Rebut max (%)", 0.0, 100.0, 3.0, 0.5)
 
-    st.markdown("---")
-    st.markdown("##### 🔍 SOURCE & FILTRES")
+    st.markdown("---", unsafe_allow_html=True)
+    st.markdown("##### 🔍 SOURCE & FILTRES", unsafe_allow_html=True)
     source = st.radio("Source", ["🗄️ Base de données", "🔵 Données démo"], horizontal=True)
 
     if source == "🗄️ Base de données":
@@ -802,7 +802,7 @@ if not df_filt.empty:
             ''', unsafe_allow_html=True)
     with cs:
         st.markdown(f'<div style="text-align:right;margin-top:8px;">{status_html}</div>', unsafe_allow_html=True)
-    st.markdown("---")
+    st.markdown("---", unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════
 # ONGLET 0 : TABLEAU DE BORD
@@ -843,7 +843,7 @@ with tabs[0]:
         with col_gauge:
             st.plotly_chart(fig_gauge, use_container_width=True)
         with col_pills:
-            st.markdown("**Composantes OEE**")
+            st.markdown("**Composantes OEE**", unsafe_allow_html=True)
             for label, key, color, icon in [
                 ("Disponibilité", 'dispo', C['dispo'], "🟢"),
                 ("Performance",   'perf',  C['perf'],  "🟡"),
@@ -972,12 +972,12 @@ with tabs[1]:
         mt = daily.groupby('code_machine')['trs'].mean().sort_values(ascending=False).reset_index()
         col_b, col_w = st.columns(2)
         with col_b:
-            st.markdown("**✅ Top 3 meilleures**")
+            st.markdown("**✅ Top 3 meilleures**", unsafe_allow_html=True)
             for _, r in mt.head(3).iterrows():
                 col = "#10b981" if r['trs'] >= 0.8 else "#f59e0b"
                 st.markdown(f"🏅 **{r['code_machine']}** — <span style='color:{col};font-weight:700;'>{r['trs']*100:.1f}%</span>", unsafe_allow_html=True)
         with col_w:
-            st.markdown("**⚠️ À améliorer**")
+            st.markdown("**⚠️ À améliorer**", unsafe_allow_html=True)
             for _, r in mt.tail(3).iterrows():
                 col = "#ef4444" if r['trs'] < 0.6 else "#f59e0b"
                 st.markdown(f"⚡ **{r['code_machine']}** — <span style='color:{col};font-weight:700;'>{r['trs']*100:.1f}%</span>", unsafe_allow_html=True)
@@ -1289,7 +1289,7 @@ with tabs[10]:
         if search:
             mask_s = df_view.astype(str).apply(lambda row: row.str.contains(search, case=False)).any(axis=1)
             df_view = df_view[mask_s]
-        st.markdown(f"**{len(df_view):,} enregistrements affichés**")
+        st.markdown(f"**{len(df_view):,} enregistrements affichés**", unsafe_allow_html=True)
         st.dataframe(df_view, use_container_width=True, height=400)
 
         col_d1, col_d2 = st.columns([1, 3])
@@ -1303,7 +1303,7 @@ with tabs[10]:
 # ══════════════════════════════════════════════════════════════
 # FOOTER
 # ══════════════════════════════════════════════════════════════
-st.markdown("---")
+st.markdown("---", unsafe_allow_html=True)
 st.markdown(
     f'<div style="text-align:center;font-size:0.68rem;color:#94a3b8;font-family:JetBrains Mono,monospace;">'
     f'SIMED TRS DASHBOARD v7.0 &nbsp;|&nbsp; ISO 22400-2:2014 &nbsp;|&nbsp; '
